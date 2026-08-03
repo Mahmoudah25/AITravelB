@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace AITravelB.Domain.Enum
 {
-    internal class Status
+    public enum TripStatus
     {
+        Draft,
+        Confirmed,
+        Completed,
+        Cancelled
     }
 }

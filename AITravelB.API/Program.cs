@@ -1,4 +1,7 @@
 
+using AITravelB.Application.Common.Interfaces;
+using AITravelB.Infrastructure.Service;
+
 namespace AITravelB.API
 {
     public class Program
@@ -11,9 +14,23 @@ namespace AITravelB.API
 
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+
+
+            // Service
+            builder.Services.AddHttpClient<IPlacesService, OsmPlacesService>(client =>
+            {
+                client.DefaultRequestHeaders.Add("User-Agent", "AITravelB/1.0 (contact: your-email@example.com)");
+            });
             builder.Services.AddOpenApi();
 
             var app = builder.Build();
+
+
+            app.MapGet("/test-places", async (IPlacesService placesService) =>
+            {
+                var results = await placesService.SearchPlacesAsync("Istanbul", "restaurant");
+                return Results.Ok(results);
+            });
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace AITravelB.Domain.Enum
 {
-    internal class ActivityType
+    public enum ActivityType
     {
+        Attraction, Restaurant, Hotel
     }
 }

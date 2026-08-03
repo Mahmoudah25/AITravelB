@@ -16,7 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\AITravelB.Application\AITravelB.Application.csproj" />
     <ProjectReference Include="..\AITravelB.Infrastructure\AITravelB.Infrastructure.csproj" />
-    <ProjectReference Include="..\AITravelB.Presistence\AITravelB.Presistence.csproj" />
+    <ProjectReference Include="..\AITravelB.Persistence\AITravelB.Persistence.csproj" />
   </ItemGroup>
 
   <ItemGroup>

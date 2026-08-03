@@ -1,6 +1,8 @@
 
 using AITravelB.Application.Common.Interfaces;
 using AITravelB.Infrastructure.Service;
+using AITravelB.Persistence.Context;
+using Microsoft.EntityFrameworkCore;
 
 namespace AITravelB.API
 {
@@ -12,11 +14,21 @@ namespace AITravelB.API
 
             // Add services to the container.
 
+           
             builder.Services.AddControllers();
+
+            ///////////////////////
+            // DB Context
+            ///////////////////////
+            builder.Services.AddDbContext<AppDbContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+            });
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 
-
+            //////////
             // Service
+            /////////
             builder.Services.AddHttpClient<IPlacesService, OsmPlacesService>(client =>
             {
                 client.DefaultRequestHeaders.Add("User-Agent", "AITravelB/1.0 (contact: your-email@example.com)");
@@ -26,11 +38,6 @@ namespace AITravelB.API
             var app = builder.Build();
 
 
-            app.MapGet("/test-places", async (IPlacesService placesService) =>
-            {
-                var results = await placesService.SearchPlacesAsync("Istanbul", "restaurant");
-                return Results.Ok(results);
-            });
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

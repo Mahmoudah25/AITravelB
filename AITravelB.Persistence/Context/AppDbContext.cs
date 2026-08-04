@@ -1,9 +1,10 @@
-﻿using AITravelB.Domain.Entities;
+﻿using AITravelB.Application.Common.Interfaces;
+using AITravelB.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace AITravelB.Persistence.Context
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext : DbContext,IApplicationDbContext
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {

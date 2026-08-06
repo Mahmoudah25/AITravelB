@@ -1,6 +1,8 @@
 
 using AITravelB.Application.Common.Interfaces;
 using AITravelB.Application.Trips.Commands;
+using AITravelB.Infrastructure.ExteranlService.Gemini;
+using AITravelB.Infrastructure.ExteranlService.Groq;
 using AITravelB.Infrastructure.Service;
 using AITravelB.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
@@ -36,6 +38,8 @@ namespace AITravelB.API
                 client.DefaultRequestHeaders.Add("User-Agent", "AITravelB/1.0 (contact: your-email@example.com)");
             });
             builder.Services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<AppDbContext>());
+            //builder.Services.AddScoped<IItineraryAiService, GeminiItineraryService>();
+            builder.Services.AddHttpClient<IItineraryAiService, GroqItineraryService>();
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateTripCommand).Assembly));
             //builder.Services.AddOpenApi();
 

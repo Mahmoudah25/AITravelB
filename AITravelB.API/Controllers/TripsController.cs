@@ -1,8 +1,10 @@
 ﻿using AITravelB.Application.Trips.Commands;
+using AITravelB.Application.Trips.Commands.GenerateItinerary;
 using AITravelB.Application.Trips.Queries.GrtTripById;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyModel.Resolution;
 
 namespace AITravelB.API.Controllers
 {
@@ -32,6 +34,13 @@ namespace AITravelB.API.Controllers
                 return NotFound();
             }
             return Ok(trip);
+        }
+
+        [HttpPost("generate-itinerary")]
+        public async Task<IActionResult> GenerateItinerary([FromBody] GenerateItinerary command)
+        {
+            var itinerary = await mediator.Send(command);
+            return Ok(itinerary);
         }
 
     }

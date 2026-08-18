@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace AITravelB.Application.Common.Interfaces
 {
-    public interface IItineraryAiService
+    public interface IWeatherService
     {
-        Task<ItineraryResult> GenerateItineraryAsync (string destination, int days, decimal budget,List<WeatherForecastDto>? weatherForecasts);
+        Task<List<WeatherForecastDto>> GetForecastAsync(string city, int days);
     }
 }

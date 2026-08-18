@@ -12,14 +12,19 @@ namespace AITravelB.Application.Trips.Commands.GenerateItinerary
     public class GenerateItineraryCommandHandler : IRequestHandler<GenerateItinerary, ItineraryResult>
     {
         private readonly IItineraryAiService apiservice;
-        public GenerateItineraryCommandHandler(IItineraryAiService apiservice)
+        private readonly IWeatherService weatherService;
+        public GenerateItineraryCommandHandler(IItineraryAiService apiservice, IWeatherService weatherService)
         {
             this.apiservice = apiservice;
+            this.weatherService = weatherService;
         }
         public async Task<ItineraryResult> Handle(GenerateItinerary request, CancellationToken cancellationToken)
         {
-
-            return await apiservice.GenerateItineraryAsync(request.Destination, request.Days, request.Budget);
+            var weatherForecast = await weatherService.GetForecastAsync(request.Destination, request.Days);
+            return await apiservice.GenerateItineraryAsync
+                (
+                request.Destination, request.Days,
+                request.Budget ,weatherForecast);
         }
     }
 }

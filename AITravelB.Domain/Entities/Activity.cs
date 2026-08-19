@@ -18,6 +18,14 @@ namespace AITravelB.Domain.Entities
         public string PlaceId { get;private set; } = string.Empty;
         public Guid TripId { get; private set; }
         public Trip Trip { get; private set; } = null!;
+        private readonly List<Booking> bookings = new List<Booking>();
+        public IReadOnlyCollection<Booking> Bookings => bookings.AsReadOnly();
+        public void AddBooking(Booking booking)
+        {
+            if (booking == null)
+                throw new ArgumentNullException(nameof(booking));
+            bookings.Add(booking);
+        }
         private Activity() { }
         public Activity(string name, ActivityType activityType, decimal estimatedCost, string timeSlot, string placeId, Guid tripId)
         {

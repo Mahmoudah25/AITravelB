@@ -9,7 +9,7 @@ namespace AITravelB.Persistence.Context
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
-
+        public DbSet<Booking> Bookings => Set<Booking>();
         public DbSet<Trip> Trips => Set<Trip>();
         public DbSet<Activity> Activities => Set<Activity>();
 

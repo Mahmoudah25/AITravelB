@@ -10,6 +10,7 @@ namespace AITravelB.Application.Common.Interfaces
 {
     public interface IApplicationDbContext
     {
+            DbSet<Booking> Bookings { get; }    
             DbSet<Trip> Trips { get; }
             DbSet<Activity> Activities { get; }
             Task<int> SaveChangesAsync(CancellationToken cancellationToken);

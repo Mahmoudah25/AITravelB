@@ -28,5 +28,24 @@ namespace AITravelB.Persistence.Configrations
                 .OnDelete(DeleteBehavior.Cascade);
            builder.Navigation(t => t.Activities).UsePropertyAccessMode(PropertyAccessMode.Field);
         }
+        public void Configure(EntityTypeBuilder<Booking> builder)
+        {
+            builder.HasKey(b => b.Id);
+
+            builder.Property(b => b.CustomerEmail)
+                .IsRequired()
+                .HasMaxLength(200);
+
+            builder.Property(b => b.Amount)
+                .HasPrecision(18, 2);
+
+            builder.Property(b => b.PaymobOrderId)
+                .HasMaxLength(100);
+
+            builder.HasOne<Activity>()
+                .WithMany(a => a.Bookings)
+                .HasForeignKey(b => b.ActivityId)
+                .OnDelete(DeleteBehavior.Cascade);
+        } 
     }
 }

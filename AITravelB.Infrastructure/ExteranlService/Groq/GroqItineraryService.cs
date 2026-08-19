@@ -96,7 +96,8 @@ namespace AITravelB.Infrastructure.ExteranlService.Groq
                     new { role = "system", content = "You are a helpful travel planning assistant that always responds with valid JSON only." },
                     new { role = "user", content = prompt }
                 },
-                response_format = new { type = "json_object" }
+                response_format = new { type = "json_object" },
+                max_tokens = 8000
             };
         }
 

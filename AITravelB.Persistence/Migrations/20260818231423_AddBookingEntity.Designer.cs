@@ -4,6 +4,7 @@ using AITravelB.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AITravelB.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260818231423_AddBookingEntity")]
+    partial class AddBookingEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -56,41 +59,6 @@ namespace AITravelB.Persistence.Migrations
                     b.ToTable("Activities");
                 });
 
-            modelBuilder.Entity("AITravelB.Domain.Entities.Booking", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ActivityId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("BookingDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CustomerEmail")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PaymobOrderId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("TripId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ActivityId");
-
-                    b.ToTable("Bookings");
-                });
-
             modelBuilder.Entity("AITravelB.Domain.Entities.Trip", b =>
                 {
                     b.Property<Guid>("Id")
@@ -127,15 +95,6 @@ namespace AITravelB.Persistence.Migrations
                     b.Navigation("Trip");
                 });
 
-            modelBuilder.Entity("AITravelB.Domain.Entities.Booking", b =>
-                {
-                    b.HasOne("AITravelB.Domain.Entities.Activity", null)
-                        .WithMany("Bookings")
-                        .HasForeignKey("ActivityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("AITravelB.Domain.Entities.Trip", b =>
                 {
                     b.OwnsOne("AITravelB.Domain.ValueObject.Budget", "Budget", b1 =>
@@ -164,11 +123,6 @@ namespace AITravelB.Persistence.Migrations
 
                     b.Navigation("Budget")
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("AITravelB.Domain.Entities.Activity", b =>
-                {
-                    b.Navigation("Bookings");
                 });
 
             modelBuilder.Entity("AITravelB.Domain.Entities.Trip", b =>

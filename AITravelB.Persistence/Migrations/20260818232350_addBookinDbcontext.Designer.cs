@@ -4,6 +4,7 @@ using AITravelB.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AITravelB.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260818232350_addBookinDbcontext")]
+    partial class addBookinDbcontext
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -86,8 +89,6 @@ namespace AITravelB.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ActivityId");
-
                     b.ToTable("Bookings");
                 });
 
@@ -127,15 +128,6 @@ namespace AITravelB.Persistence.Migrations
                     b.Navigation("Trip");
                 });
 
-            modelBuilder.Entity("AITravelB.Domain.Entities.Booking", b =>
-                {
-                    b.HasOne("AITravelB.Domain.Entities.Activity", null)
-                        .WithMany("Bookings")
-                        .HasForeignKey("ActivityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("AITravelB.Domain.Entities.Trip", b =>
                 {
                     b.OwnsOne("AITravelB.Domain.ValueObject.Budget", "Budget", b1 =>
@@ -164,11 +156,6 @@ namespace AITravelB.Persistence.Migrations
 
                     b.Navigation("Budget")
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("AITravelB.Domain.Entities.Activity", b =>
-                {
-                    b.Navigation("Bookings");
                 });
 
             modelBuilder.Entity("AITravelB.Domain.Entities.Trip", b =>

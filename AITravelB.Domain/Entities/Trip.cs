@@ -16,7 +16,7 @@ namespace AITravelB.Domain.Entities
         public int Days { get; private set; } 
      
         public TripStatus status { get; private set; } = TripStatus.Draft;
-        public Budget Budget { get; set; } 
+        public Budget Budget { get; set; }
         private readonly List<Activity> activities = new List<Activity>();
         public IReadOnlyCollection<Activity> Activities => activities.AsReadOnly();
 

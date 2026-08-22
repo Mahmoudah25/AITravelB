@@ -20,5 +20,16 @@ namespace AITravelB.API.Controllers
             var bookingId = await mediatR.Send(command);
             return Ok(bookingId);
         }
+
+        [HttpPost("{bookingId}/initiate-payment")]
+        public async Task<IActionResult> InitiatePayment(Guid bookingId)
+        {
+            var command = new Application.Bookings.Commands.InitiatePayment.InitiatePaymentCommand
+            {
+                BookingId = bookingId
+            };
+            var paymentUrl = await mediatR.Send(command);
+            return Ok(paymentUrl);
+        }
     }
 }

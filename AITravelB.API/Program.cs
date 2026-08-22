@@ -1,7 +1,9 @@
 
 using AITravelB.Application.Common.Interfaces;
+using AITravelB.Application.Common.setting;
 using AITravelB.Application.Trips.Commands;
 using AITravelB.Infrastructure.ExteranlService.Groq;
+using AITravelB.Infrastructure.ExteranlService.Paymob;
 using AITravelB.Infrastructure.ExteranlService.Weather;
 using AITravelB.Infrastructure.Service;
 using AITravelB.Persistence.Context;
@@ -41,6 +43,13 @@ namespace AITravelB.API
             //builder.Services.AddScoped<IItineraryAiService, GeminiItineraryService>();
             builder.Services.AddHttpClient<IItineraryAiService, GroqItineraryService>();
             builder.Services.AddHttpClient<IWeatherService, OpenWeatherService>();
+            builder.Services.AddHttpClient<IPaymentGateway, PayMobService>(client =>
+            {
+                client.BaseAddress = new Uri(builder.Configuration["ExternalServices:Paymob:BaseUrl"]
+                    ?? throw new InvalidOperationException("PayMob BaseUrl is not configured."));
+                client.DefaultRequestHeaders.Add("Accept", "application/json");
+            });
+            builder.Services.Configure<PayMobSetting>(builder.Configuration.GetSection("ExternalServices:Paymob"));
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateTripCommand).Assembly));
             //builder.Services.AddOpenApi();
 

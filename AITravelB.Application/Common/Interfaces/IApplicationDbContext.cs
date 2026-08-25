@@ -13,6 +13,7 @@ namespace AITravelB.Application.Common.Interfaces
             DbSet<Booking> Bookings { get; }    
             DbSet<Trip> Trips { get; }
             DbSet<Activity> Activities { get; }
-            Task<int> SaveChangesAsync(CancellationToken cancellationToken);
+            DbSet<Rating> Ratings { get; }  
+        Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

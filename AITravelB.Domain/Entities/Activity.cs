@@ -20,6 +20,14 @@ namespace AITravelB.Domain.Entities
         public Trip Trip { get; private set; } = null!;
         private readonly List<Booking> bookings = new List<Booking>();
         public IReadOnlyCollection<Booking> Bookings => bookings.AsReadOnly();
+        private readonly List<Rating> ratings = new List<Rating>();
+        public IReadOnlyCollection<Rating> Ratings => ratings.AsReadOnly();
+        public void AddRating(Rating rating)
+        {
+            if (rating == null)
+                throw new ArgumentNullException(nameof(rating));
+            ratings.Add(rating);
+        }
         public void AddBooking(Booking booking)
         {
             if (booking == null)

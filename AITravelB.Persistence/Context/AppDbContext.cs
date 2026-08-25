@@ -12,6 +12,7 @@ namespace AITravelB.Persistence.Context
         public DbSet<Booking> Bookings => Set<Booking>();
         public DbSet<Trip> Trips => Set<Trip>();
         public DbSet<Activity> Activities => Set<Activity>();
+        public DbSet<Rating> Ratings => Set<Rating>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

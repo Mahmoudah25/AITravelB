@@ -11,10 +11,12 @@ namespace AITravelB.API.Controllers
     {
         private readonly IApplicationDbContext context;
         private readonly IPaymentGateway paymentGateway;
-        public PaymobWebhookController(IApplicationDbContext context, IPaymentGateway paymentGateway)
+        private readonly INotificationService notificationService;
+        public PaymobWebhookController(IApplicationDbContext context, IPaymentGateway paymentGateway, INotificationService notificationService)
         {
             this.context = context;
             this.paymentGateway = paymentGateway;
+            this.notificationService = notificationService;
         }
 
         [HttpPost("paymob")]
@@ -62,9 +64,11 @@ namespace AITravelB.API.Controllers
             else
                 booking.MarkAsFailed();
             await context.SaveChangesAsync(default);
+            await notificationService.NotificationBopkingStatusChangedAsync(
+                booking.CustomerEmail,
+                booking.Id,
+                booking.Status.ToString());
             return Ok();
-
-
         }
     }
 }

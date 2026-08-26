@@ -1,4 +1,6 @@
 
+using AITravelB.API.Hubs;
+using AITravelB.API.Services;
 using AITravelB.Application.Common.Interfaces;
 using AITravelB.Application.Common.setting;
 using AITravelB.Application.Trips.Commands;
@@ -43,6 +45,7 @@ namespace AITravelB.API
             //builder.Services.AddScoped<IItineraryAiService, GeminiItineraryService>();
             builder.Services.AddHttpClient<IItineraryAiService, GroqItineraryService>();
             builder.Services.AddHttpClient<IWeatherService, OpenWeatherService>();
+            builder.Services.AddScoped<INotificationService, SignalRNotificationService>();
             builder.Services.AddHttpClient<IPaymentGateway, PayMobService>(client =>
             {
                 client.BaseAddress = new Uri(builder.Configuration["ExternalServices:Paymob:BaseUrl"]
@@ -51,6 +54,7 @@ namespace AITravelB.API
             });
             builder.Services.Configure<PayMobSetting>(builder.Configuration.GetSection("ExternalServices:Paymob"));
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateTripCommand).Assembly));
+            builder.Services.AddSignalR();
             //builder.Services.AddOpenApi();
 
             // =======================
@@ -93,21 +97,30 @@ namespace AITravelB.API
                 });
             });
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", builder =>
+                 {
+                     builder.AllowAnyOrigin()
+                            .AllowAnyMethod()
+                            .AllowAnyHeader();
+                 });
+            });
+
             var app = builder.Build();
-
-
-
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+            app.UseCors("AllowAll");    
+
+
 
             app.UseAuthorization();
-
-
             app.MapControllers();
+            app.MapHub<NotificationHub>("/hubs/notifications");
 
             app.Run();
         }

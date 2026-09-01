@@ -97,7 +97,7 @@ namespace AITravelB.Infrastructure.ExteranlService.Groq
                     new { role = "user", content = prompt }
                 },
                 response_format = new { type = "json_object" },
-                max_tokens = 8000
+                max_tokens = 4000
             };
         }
 

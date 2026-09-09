@@ -40,6 +40,7 @@ namespace AITravelB.API
             builder.Services.AddHttpClient<IPlacesService, OsmPlacesService>(client =>
             {
                 client.DefaultRequestHeaders.Add("User-Agent", "AITravelB/1.0 (contact: your-email@example.com)");
+                client.Timeout = TimeSpan.FromSeconds(5);
             });
             builder.Services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<AppDbContext>());
             //builder.Services.AddScoped<IItineraryAiService, GeminiItineraryService>();
@@ -105,7 +106,8 @@ namespace AITravelB.API
                             "http://127.0.0.1:5500", "http://localhost:5500",
                             "http://127.0.0.1:5501", "http://localhost:5501")
                           .AllowAnyMethod()
-                          .AllowAnyHeader();
+                          .AllowAnyHeader()
+                          .AllowCredentials();
                 });
             });
 

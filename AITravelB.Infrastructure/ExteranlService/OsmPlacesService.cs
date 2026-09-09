@@ -28,7 +28,7 @@ namespace AITravelB.Infrastructure.Service
                  out body 20;";
 
             var content = new StringContent(query, Encoding.UTF8, "text/plain");
-            var response = await httpClient.PostAsync("https://overpass-api.de/api/interpreter", content);
+            var response = await httpClient.PostAsync("https://overpass.kumi.systems/api/interpreter", content);
             response.EnsureSuccessStatusCode();
             var json = await response.Content.ReadAsStringAsync();
             var overpassResponse = System.Text.Json.JsonSerializer.Deserialize<OverpassResponse>(json);

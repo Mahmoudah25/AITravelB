@@ -19,11 +19,11 @@ namespace AITravelB.Infrastructure.ExteranlService.Groq
             this.httpClient = httpClient;
             this.configuration = configuration;
         }
-        public async Task<ItineraryResult> GenerateItineraryAsync(string destination, int days, decimal budget, List<WeatherForecastDto>? weatherForecast = null)
+        public async Task<ItineraryResult> GenerateItineraryAsync(string destination, int days, decimal budget, List<WeatherForecastDto>? weatherForecast = null,List<PlaceDto>? availablePlaces = null)
         {
             var apiKey = configuration["ExternalServices:AiProvider:ApiKey"]
                ?? throw new InvalidOperationException("API key is missing.");
-            var prompt = GenerateGroqQuery(destination, days, budget,weatherForecast);
+            var prompt = GenerateGroqQuery(destination, days, budget,weatherForecast,availablePlaces);
             var requestBody = BuildRequestBody(prompt);
             var request = new HttpRequestMessage(HttpMethod.Post, "https://api.groq.com/openai/v1/chat/completions");
             request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", apiKey);
@@ -53,12 +53,14 @@ namespace AITravelB.Infrastructure.ExteranlService.Groq
         }
 
  
-        private string GenerateGroqQuery(string destination, int days, decimal budget,List<WeatherForecastDto>? weatherForecast)
+        private string GenerateGroqQuery(string destination, int days, decimal budget,List<WeatherForecastDto>? weatherForecast , List<PlaceDto>? availablePlaces = null)
         {
             string weatherNote = BuildWeatherNote(weatherForecast); // You can pass actual weatherForecast if available
+            string placeNote = buildplaceNote(availablePlaces); // You can pass actual availablePlaces if available
             return $@"You are a professional travel planner. Create a {days}-day travel itinerary for {destination} 
              with a total budget of {budget} USD. Distribute activities logically by time of day.
-
+               {weatherNote}
+               {placeNote}
               Return ONLY valid JSON in exactly this structure, with no extra text:
              {{
              ""days"": [
@@ -71,6 +73,19 @@ namespace AITravelB.Infrastructure.ExteranlService.Groq
             ],
             ""totalEstimatedCost"": 0
             }}";
+        }
+
+        private string buildplaceNote(List<PlaceDto>? availablePlaces)
+        {
+            if(availablePlaces == null || availablePlaces.Count == 0)
+                return string.Empty;
+            var sb = new StringBuilder();
+            sb.AppendLine("Here are real places available in this destination. You MUST choose activity names ONLY from this list (use the exact name):");
+            foreach (var place in availablePlaces)
+            {
+                sb.AppendLine($"- {place.Name}");
+            }
+            return sb.ToString();
         }
         private string BuildWeatherNote(List<WeatherForecastDto> weatherForecast)
         {

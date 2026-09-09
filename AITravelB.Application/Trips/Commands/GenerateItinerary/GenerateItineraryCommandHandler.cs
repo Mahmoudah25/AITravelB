@@ -12,18 +12,23 @@ namespace AITravelB.Application.Trips.Commands.GenerateItinerary
         private readonly IItineraryAiService apiservice;
         private readonly IWeatherService weatherService;
         private readonly IApplicationDbContext context;
+        private readonly IPlacesService placesService;
 
-        public GenerateItineraryCommandHandler(IItineraryAiService apiservice, IWeatherService weatherService, IApplicationDbContext context)
+        public GenerateItineraryCommandHandler(
+            IItineraryAiService apiservice,
+            IWeatherService weatherService,
+            IApplicationDbContext context,
+            IPlacesService placesService)
         {
             this.apiservice = apiservice;
             this.weatherService = weatherService;
             this.context = context;
+            this.placesService = placesService;
         }
 
         public async Task<ItineraryResult> Handle(GenerateItinerary request, CancellationToken cancellationToken)
         {
-            Console.WriteLine($"Handle called for TripId: {request.TripId} at {DateTime.UtcNow:HH:mm:ss.fff}");
-            // 1. جيب الطقس الأول (لو فشل، نكمل من غيره)
+            // 1. جيب الطقس (لو فشل، نكمل من غيره)
             List<WeatherForecastDto>? weatherForecast = null;
             try
             {
@@ -34,24 +39,39 @@ namespace AITravelB.Application.Trips.Commands.GenerateItinerary
                 Console.WriteLine($"Weather service failed: {ex.Message}");
             }
 
-            // 2. نادي الـ AI مرة واحدة بس، بالطقس (لو موجود)
-            var itinerary = await apiservice.GenerateItineraryAsync(
-                request.Destination, request.Days, request.Budget, weatherForecast);
+            // 2. جيب الأماكن الحقيقية (لو فشلت، نكمل من غيرها)
+            List<PlaceDto> availablePlaces = new();
+            try
+            {
+                var restaurants = await placesService.SearchPlacesAsync(request.Destination, "restaurant");
+                var attractions = await placesService.SearchPlacesAsync(request.Destination, "attraction");
+                availablePlaces = restaurants.Concat(attractions).ToList();
+                Console.WriteLine($"Found {availablePlaces.Count} places from OSM for {request.Destination}");
+                foreach (var place in availablePlaces.Take(5))
+                {
+                    Console.WriteLine($"  - {place.Name}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Places service failed: {ex.Message}");
+            }
 
-            // 3. جيب الرحلة من الداتابيز
-            var trip = await context.Trips
-                .AnyAsync(t => t.Id == request.TripId, cancellationToken);
-
-            if (!trip)
+            // 3. تأكد إن الرحلة موجودة (مرة واحدة بس)
+            var tripExists = await context.Trips.AnyAsync(t => t.Id == request.TripId, cancellationToken);
+            if (!tripExists)
                 throw new InvalidOperationException($"Trip with ID {request.TripId} not found.");
 
-            // 4. احفظ كل نشاط، وحدّث الـ ActivityId في الـ response
+            // 4. نادِ الـ AI بكل المعلومات مع بعض
+            var itinerary = await apiservice.GenerateItineraryAsync(
+                request.Destination, request.Days, request.Budget, weatherForecast, availablePlaces);
+
+            // 5. احفظ كل نشاط
             foreach (var day in itinerary.Days)
             {
                 foreach (var activityPlan in day.Activities)
                 {
                     var mappedType = MapToActivityType(activityPlan.Type);
-
                     var newActivity = new Activity(
                         activityPlan.PlaceName,
                         mappedType,
@@ -65,9 +85,7 @@ namespace AITravelB.Application.Trips.Commands.GenerateItinerary
                 }
             }
 
-            // 5. احفظ مرة واحدة بعد كل الـ loops
             await context.SaveChangesAsync(cancellationToken);
-
             return itinerary;
         }
 

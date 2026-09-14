@@ -38,7 +38,7 @@ namespace AITravelB.Application.Trips.Commands.GenerateItinerary
             {
                 Console.WriteLine($"Weather service failed: {ex.Message}");
             }
-
+            
             // 2. جيب الأماكن الحقيقية (لو فشلت، نكمل من غيرها)
             List<PlaceDto> availablePlaces = new();
             try
@@ -65,6 +65,20 @@ namespace AITravelB.Application.Trips.Commands.GenerateItinerary
             // 4. نادِ الـ AI بكل المعلومات مع بعض
             var itinerary = await apiservice.GenerateItineraryAsync(
                 request.Destination, request.Days, request.Budget, weatherForecast, availablePlaces);
+
+            if (weatherForecast != null)
+            {
+                foreach (var day in itinerary.Days)
+                {
+                    var marchingWeather = weatherForecast.ElementAtOrDefault(day.DayNumber - 1);
+                    if (marchingWeather != null)
+                    {
+                        day.WeatherCondition = marchingWeather.Condition;
+                        day.TemperatureCelsius = marchingWeather.TemperatureCelsius;
+
+                    }
+                }
+            }
 
             // 5. احفظ كل نشاط
             foreach (var day in itinerary.Days)

@@ -10,6 +10,8 @@ namespace AITravelB.Application.Common.DTOs
     {
         public int DayNumber {  get; set; }
         public List<ActivityPlan> Activities { get; set; } = new();
-        
+        public string? WeatherCondition { get; set; }
+        public double TemperatureCelsius { get; set; }
+
     }
 }

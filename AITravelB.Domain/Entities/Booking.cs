@@ -15,10 +15,11 @@ namespace AITravelB.Domain.Entities
         public BookingStatus Status { get; private set; }
         public DateTime BookingDate { get; private set; }
         public decimal Amount { get; private set; }
+        public string Currency {  get; private set; }
         public string CustomerEmail { get; private set; } = string.Empty;
         public string? PaymobOrderId { get; private set; } = string.Empty;
         private Booking() { }
-        public Booking(Guid tripId, Guid activityId, decimal amount, string customerEmail)
+        public Booking(Guid tripId, Guid activityId, decimal amount,string currency , string customerEmail)
         {
             if (string.IsNullOrWhiteSpace(customerEmail))
             {
@@ -40,6 +41,7 @@ namespace AITravelB.Domain.Entities
             TripId = tripId;
             ActivityId = activityId;
             Amount = amount;
+            Currency = string.IsNullOrWhiteSpace(currency) ? "EGP" : currency.ToUpperInvariant();
             CustomerEmail = customerEmail;
             Status = BookingStatus.Pending;
             BookingDate = DateTime.UtcNow;

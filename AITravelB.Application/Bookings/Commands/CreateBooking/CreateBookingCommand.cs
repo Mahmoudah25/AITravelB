@@ -12,6 +12,7 @@ namespace AITravelB.Application.Bookings.Commands.CreateBooking
         public Guid TripId { get; set; }
         public Guid ActivityId { get; set; }
         public decimal Amount { get; set; }
+        public string Currency {  get; set; } = string.Empty;
         public string CustomerEmail { get; set; } = string.Empty;
     }
 }

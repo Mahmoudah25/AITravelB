@@ -22,6 +22,7 @@ namespace AITravelB.Application.Bookings.Commands.CreateBooking
             (   request.TripId,
                 request.ActivityId,
                 request.Amount,
+                request.Currency,
                 request.CustomerEmail
             );
             await context.Bookings.AddAsync(booking);

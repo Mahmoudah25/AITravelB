@@ -22,14 +22,14 @@ namespace AITravelB.Infrastructure.ExteranlService.Paymob
         }
         public string IFrameId => payMobSetting.IFrameId;
 
-        public async Task<string> CreateOrderAsync(string authToken, decimal amount, string orderId)
+        public async Task<string> CreateOrderAsync(string authToken, decimal amount, string currency, string orderId)
         {
             var body = new
             {
                 auth_token = authToken,
                 delivery_needed = false,
                 merchant_order_id = orderId,
-                currency = "EGP",
+                currency = currency,
                 items = Array.Empty<object>(),
                 amount_cents = (int)(amount * 100)
             };
@@ -68,7 +68,7 @@ namespace AITravelB.Infrastructure.ExteranlService.Paymob
             throw new InvalidOperationException("Auth token not found in the response.");
         }
 
-        public async Task<string> GetPaymentKeyAsync(string authToken, string paymobOrderId, decimal amount, string billingEmail)
+        public async Task<string> GetPaymentKeyAsync(string authToken, string paymobOrderId, decimal amount, string currency, string billingEmail)
         {
             var body = new
             {
@@ -92,7 +92,7 @@ namespace AITravelB.Infrastructure.ExteranlService.Paymob
                     country = "N/A",
                     state = "N/A"
                 },
-                currency = "EGP",
+                currency = currency,
                 integration_id = payMobSetting.IntegrationId
             };
             var response = await httpClient.PostAsJsonAsync("acceptance/payment_keys", body); // relative

@@ -22,7 +22,7 @@ namespace AITravelB.Application.Bookings.Commands.CreateBooking
             (   request.TripId,
                 request.ActivityId,
                 request.Amount,
-                request.Currency,
+                "EGP",
                 request.CustomerEmail
             );
             await context.Bookings.AddAsync(booking);

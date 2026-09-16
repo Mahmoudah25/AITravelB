@@ -116,7 +116,6 @@ namespace AITravelB.API
             var app = builder.Build();
             // Configure the HTTP request pipeline.
 
-            app.UseDeveloperExceptionPage();
 
             app.UseSwagger();
             app.UseSwaggerUI();
